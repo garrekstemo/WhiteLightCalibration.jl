@@ -1,7 +1,7 @@
 using DelimitedFiles
 using CSV
 using DataFrames
-using Interpolations
+using DataInterpolations
 using CairoMakie
 using GLMakie
 
@@ -32,7 +32,7 @@ function calibrate(λs, time, raw, interp_func)
             end
 
             # Interpolate the raw data to find the value at the new time point
-            itp = LinearInterpolation(time, raw[:, i], extrapolation_bc = Flat())
+            itp = LinearInterpolation(raw[:, i], time)
             data[j, i] = itp(new_time)
         end
     end
@@ -53,8 +53,8 @@ fs = range(-4000, stop=40000, length = size(raw, 1))
 poly600 = poly(λs600, [30780, 112.12, 0.1383, 5.9476e-5])
 poly650 = poly(λs650, [13720, 52.688, 0.067453, 2.9517e-5])
 
-interp600 = LinearInterpolation(λs600, poly600)
-interp650 = LinearInterpolation(λs650, poly650)
+interp600 = LinearInterpolation(poly600, λs600)
+interp650 = LinearInterpolation(poly650, λs650)
 
 # Check that the interpolation functions are correct
 λs_raw[1]
